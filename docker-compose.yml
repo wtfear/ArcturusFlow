@@ -9,7 +9,10 @@ services:
       - postgres
       - redis
     env_file:
-      - .env.example
+      - path: .env
+        required: false
+      - path: .env.example
+        required: false
     environment:
       - AP_CONTAINER_TYPE=APP
       - AP_ENVIRONMENT=prod
@@ -37,7 +40,10 @@ services:
     depends_on:
       - app
     env_file:
-      - .env.example
+      - path: .env
+        required: false
+      - path: .env.example
+        required: false
     environment:
       - AP_CONTAINER_TYPE=WORKER
       - AP_ENVIRONMENT=prod

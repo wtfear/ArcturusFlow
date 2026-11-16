@@ -79,7 +79,9 @@ activepieces-engine.js
 scratch.md
 
 # environment variables
-.env*
+.env
+.env.*
+!.env.example
 
 # chat-eval CLI cache + decision log
 .chat-eval/
