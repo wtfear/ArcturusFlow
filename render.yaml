@@ -1,0 +1,125 @@
+services:
+  - type: web
+    name: arcturus-flow-app
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: standard
+    region: oregon
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: AP_CONTAINER_TYPE
+        value: APP
+      - key: AP_ENVIRONMENT
+        value: prod
+      - key: AP_FRONTEND_URL
+        fromService:
+          type: web
+          name: arcturus-flow-app
+          property: host
+      - key: AP_POSTGRES_DATABASE
+        fromDatabase:
+          name: arcturus-flow-db
+          property: database
+      - key: AP_POSTGRES_HOST
+        fromDatabase:
+          name: arcturus-flow-db
+          property: host
+      - key: AP_POSTGRES_PORT
+        fromDatabase:
+          name: arcturus-flow-db
+          property: port
+      - key: AP_POSTGRES_USERNAME
+        fromDatabase:
+          name: arcturus-flow-db
+          property: user
+      - key: AP_POSTGRES_PASSWORD
+        fromDatabase:
+          name: arcturus-flow-db
+          property: password
+      - key: AP_REDIS_HOST
+        fromService:
+          type: redis
+          name: arcturus-flow-redis
+          property: host
+      - key: AP_REDIS_PORT
+        fromService:
+          type: redis
+          name: arcturus-flow-redis
+          property: port
+      - key: AP_JWT_SECRET
+        generateValue: true
+      - key: AP_ENCRYPTION_KEY
+        generateValue: true
+      - key: AP_EXECUTION_MODE
+        value: UNSANDBOXED
+      - key: AP_TELEMETRY_ENABLED
+        value: "false"
+
+  - type: worker
+    name: arcturus-flow-worker
+    env: docker
+    dockerfilePath: Dockerfile
+    dockerCommand: node dist/packages/server/api/main.js
+    plan: standard
+    region: oregon
+    envVars:
+      - key: AP_CONTAINER_TYPE
+        value: WORKER
+      - key: AP_ENVIRONMENT
+        value: prod
+      - key: AP_POSTGRES_DATABASE
+        fromDatabase:
+          name: arcturus-flow-db
+          property: database
+      - key: AP_POSTGRES_HOST
+        fromDatabase:
+          name: arcturus-flow-db
+          property: host
+      - key: AP_POSTGRES_PORT
+        fromDatabase:
+          name: arcturus-flow-db
+          property: port
+      - key: AP_POSTGRES_USERNAME
+        fromDatabase:
+          name: arcturus-flow-db
+          property: user
+      - key: AP_POSTGRES_PASSWORD
+        fromDatabase:
+          name: arcturus-flow-db
+          property: password
+      - key: AP_REDIS_HOST
+        fromService:
+          type: redis
+          name: arcturus-flow-redis
+          property: host
+      - key: AP_REDIS_PORT
+        fromService:
+          type: redis
+          name: arcturus-flow-redis
+          property: port
+      - key: AP_JWT_SECRET
+        fromService:
+          type: web
+          name: arcturus-flow-app
+          envVarKey: AP_JWT_SECRET
+      - key: AP_ENCRYPTION_KEY
+        fromService:
+          type: web
+          name: arcturus-flow-app
+          envVarKey: AP_ENCRYPTION_KEY
+      - key: AP_EXECUTION_MODE
+        value: UNSANDBOXED
+
+  - type: redis
+    name: arcturus-flow-redis
+    plan: standard
+    region: oregon
+    ipAllowList: []
+
+databases:
+  - name: arcturus-flow-db
+    plan: standard
+    region: oregon
+    databaseName: activepieces_production
+    user: arcturus_admin
+    postgresMajorVersion: 14
