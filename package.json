@@ -19,8 +19,7 @@
     "version": "8.8.1"
   },
   "scripts": {
-    "prepare": "husky install || true",
-    "prebuild": "node tools/scripts/install-bun.js",
+    "build": "node build.js",
     "serve:frontend": "turbo run serve --filter=web",
     "serve:backend": "turbo run serve --filter=api",
     "serve:engine": "turbo run serve --filter=@activepieces/engine",
